@@ -100,7 +100,8 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
                         .capture(true)
                         .captureStrategy(
                                 new CaptureStrategy(true, "com.zhihu.matisse.sample.fileprovider",
-                                        "preventpro"))//拍照后照片存得地址：内部存储/Pictures/preventpro
+                                        //TODO 拍照后照片存得地址：内部存储/Pictures/preventpro；这个名字就是图片要存的文件夹名字
+                                        "preventpro"))
                         .forResult(REQUEST_CODE_TAKE_PHOTO);
                 break;
             case R.id.zhihu:
@@ -109,6 +110,7 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
                         .countable(true)
                         .capture(true)
                         .captureStrategy(
+                                //TODO 第一个参数isPublic表示可以存储到公共区域还是沙箱内，是对Android10的适配；在MediaStoreCompat中使用
                                 new CaptureStrategy(true, "com.zhihu.matisse.sample.fileprovider", "preventpro"))
                         .maxSelectable(9)
                         .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
@@ -224,7 +226,7 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
     public static File getPictureDirPath() {
         File mIVMSFolder = null;
         try {
-            //内部存储/Pictures/preventpro
+            //设置图片存储的位置：内部存储/Pictures/preventpro
             String path = Environment.getExternalStoragePublicDirectory(
                     Environment.DIRECTORY_PICTURES).getAbsolutePath() + File.separator + "preventpro";
             mIVMSFolder = new File(path);

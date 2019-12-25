@@ -77,6 +77,7 @@ public class MediaStoreCompat {
         Intent captureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (captureIntent.resolveActivity(context.getPackageManager()) != null) {
 
+            //TODO 适配Android10，小于等于9使用FileProvider.getUriForFile()获取uri
             if (Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
                 mCurrentPhotoUri = createImageUri();
             } else {
@@ -127,11 +128,11 @@ public class MediaStoreCompat {
         //兼容Android Q和以下版本
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             //android Q中不再使用DATA字段，而用RELATIVE_PATH代替
-            //RELATIVE_PATH是相对路径不是绝对路径;照片存储的地方为：内部存储/Pictures/preventpro
+            //TODO RELATIVE_PATH是相对路径不是绝对路径;照片存储的地方为：内部存储/Pictures/preventpro
             contentValues.put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/preventpro");
         } else {
-            contentValues.put(MediaStore.Images.Media.DATA,
-                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath());
+//            contentValues.put(MediaStore.Images.Media.DATA,
+//                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath());
         }
         //设置文件类型
         contentValues.put(MediaStore.Images.Media.MIME_TYPE, "image/JPEG");
@@ -147,12 +148,12 @@ public class MediaStoreCompat {
         // Create an image file name
         String imageFileName = String.format("%s.jpg", System.currentTimeMillis());
         File storageDir;
-        if (mCaptureStrategy.isPublic) {
+        if (mCaptureStrategy.isPublic) {//TODO 图片存在公共区域内部存储/Pictures
             //目录地址：内部存储/Pictures
             storageDir = Environment.getExternalStoragePublicDirectory(
                     Environment.DIRECTORY_PICTURES);
             if (!storageDir.exists()) storageDir.mkdirs();
-        } else {
+        } else {//TODO 图片存到沙箱内
             storageDir = mContext.get().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         }
         if (mCaptureStrategy.directory != null) {

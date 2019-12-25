@@ -77,6 +77,7 @@ public class AlbumsSpinner {
         cursor.moveToPosition(position);
         Album album = Album.valueOf(cursor);
         String displayName = album.getDisplayName(context);
+        //TODO "preventpro"是图片的文件夹名字，这里可以自己修改为想要的中文名字
         if(!album.isAll() && !TextUtils.isEmpty(displayName) && "preventpro".equals(displayName)){
             displayName = "现场相册";
         }

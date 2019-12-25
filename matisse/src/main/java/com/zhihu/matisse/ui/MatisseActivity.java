@@ -382,6 +382,7 @@ public class MatisseActivity extends AppCompatActivity implements
                 if (cursor.moveToPosition(i)) {
                     String bucket_display_name = cursor.getString(cursor.getColumnIndex("bucket_display_name"));
                     System.out.println("bucket_display_name========="+bucket_display_name);
+                    //TODO "preventpro"表示的是默认想要展示的文件夹的名字，也可以不设置就展示全部的
                     if (!TextUtils.isEmpty(bucket_display_name) && "preventpro".equals(bucket_display_name)) {
                         mAlbumCollection.setStateCurrentSelection(i == 0 ? 1 : i);
                         break;
