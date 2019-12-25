@@ -13,30 +13,25 @@ Matisse.from(SampleActivity.this)
                         .countable(true)
                         .capture(true)
                         .captureStrategy(
-                                new CaptureStrategy(true, "com.zhihu.matisse.sample.fileprovider", ""))
+                                //TODO 第一个参数isPublic表示可以存储到公共区域还是沙箱内，是对Android10的适配；在MediaStoreCompat中使用
+                                new CaptureStrategy(true, "com.zhihu.matisse.sample.fileprovider", "preventpro"))
                         .maxSelectable(9)
                         .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
                         .gridExpectedSize(
                                 getResources().getDimensionPixelSize(R.dimen.grid_expected_size))
                         .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
                         .thumbnailScale(0.85f)
-//                                            .imageEngine(new GlideEngine())  // for glide-V3
-                        .imageEngine(new GlideEngine())    // for glide-V4
+                        .imageEngine(new GlideEngine())
                         .setOnSelectedListener((uriList, pathList) -> {
-                            // DO SOMETHING IMMEDIATELY HERE
                             Log.e("onSelected", "onSelected: pathList=" + pathList);
-
                         })
                         .showSingleMediaType(true)
                         .originalEnable(true)
                         .maxOriginalSize(10)
                         .autoHideToolbarOnSingleTap(true)
                         .setOnCheckedListener(isChecked -> {
-                            // DO SOMETHING IMMEDIATELY HERE
                             Log.e("isChecked", "onCheck: isChecked=" + isChecked);
                         })
-                        //defaultPath()就是要默认打开的文件夹路径
-                        .defaultPath(getPictureDirPath().getAbsolutePath())
                         .forResult(REQUEST_CODE_CHOOSE);
 ```
 
@@ -48,15 +43,16 @@ Matisse.from(SampleActivity.this)
                         .takePic(true)//设置立即拍照，跳转到系统相机界面
                         .capture(true)
                         .captureStrategy(
-                                new CaptureStrategy(true,
-                                        "com.zhihu.matisse.sample.fileprovider", ""))
+                                new CaptureStrategy(true, "com.zhihu.matisse.sample.fileprovider",
+                                        //TODO 拍照后照片存得地址：内部存储/Pictures/preventpro；这个名字就是图片要存的文件夹名字
+                                        "preventpro"))
                         .forResult(REQUEST_CODE_TAKE_PHOTO);
 ```
 其中的CaptureStrategy的第二个参数作者是要和清单文件中的FileProvider中的authorities保持一致。
 拍照完成后,记得扫描文件：
 ```java
 @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             ...
