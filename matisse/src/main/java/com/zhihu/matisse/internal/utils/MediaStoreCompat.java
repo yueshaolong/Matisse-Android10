@@ -130,15 +130,13 @@ public class MediaStoreCompat {
             //android Q中不再使用DATA字段，而用RELATIVE_PATH代替
             //TODO RELATIVE_PATH是相对路径不是绝对路径;照片存储的地方为：内部存储/Pictures/preventpro
             contentValues.put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/preventpro");
-        } else {
-//            contentValues.put(MediaStore.Images.Media.DATA,
-//                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath());
         }
         //设置文件类型
         contentValues.put(MediaStore.Images.Media.MIME_TYPE, "image/JPEG");
         //执行insert操作，向系统文件夹中添加文件
         //EXTERNAL_CONTENT_URI代表外部存储器，该值不变
-        Uri uri = mContext.get().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+        Uri uri = mContext.get().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                contentValues);
         return uri;
 
     }
