@@ -37,6 +37,18 @@
             android:textAllCaps="false"
             android:textColor="@android:color/white"
             android:theme="@style/ZhihuOverlay" />
+        <Button
+            android:id="@+id/zhihu2_all"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/item_margin_horizontal"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="@dimen/item_margin_horizontal"
+            android:minHeight="56dp"
+            android:text="zhihu2_all"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:theme="@style/ZhihuOverlay" />
 
         <Button
             android:id="@+id/dracula"

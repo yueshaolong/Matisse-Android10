@@ -58,6 +58,7 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         findViewById(R.id.zhihu).setOnClickListener(this);
+        findViewById(R.id.zhihu2_all).setOnClickListener(this);
         findViewById(R.id.dracula).setOnClickListener(this);
         findViewById(R.id.only_gif).setOnClickListener(this);
         findViewById(R.id.take_photo).setOnClickListener(this);
@@ -129,6 +130,35 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
                         .setOnCheckedListener(isChecked -> {
                             Log.e("isChecked", "onCheck: isChecked=" + isChecked);
                         })
+                        .defaultPath(getPictureDirPath().getAbsolutePath())//设置默认打开照片的路径
+                        .forResult(REQUEST_CODE_CHOOSE);
+                break;
+            case R.id.zhihu2_all:
+                Matisse.from(SampleActivity.this)
+                        .choose(MimeType.ofImage(), false)
+                        .countable(true)
+                        .capture(true)
+                        .captureStrategy(
+                                //TODO 第一个参数isPublic表示可以存储到公共区域还是沙箱内，是对Android10的适配；在MediaStoreCompat中使用
+                                new CaptureStrategy(true, "com.zhihu.matisse.sample.fileprovider", "preventpro"))
+                        .maxSelectable(9)
+                        .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
+                        .gridExpectedSize(
+                                getResources().getDimensionPixelSize(R.dimen.grid_expected_size))
+                        .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+                        .thumbnailScale(0.85f)
+                        .imageEngine(new GlideEngine())
+                        .setOnSelectedListener((uriList, pathList) -> {
+                            Log.e("onSelected", "onSelected: pathList=" + pathList);
+                        })
+                        .showSingleMediaType(true)
+                        .originalEnable(true)
+                        .maxOriginalSize(10)
+                        .autoHideToolbarOnSingleTap(true)
+                        .setOnCheckedListener(isChecked -> {
+                            Log.e("isChecked", "onCheck: isChecked=" + isChecked);
+                        })
+                        .defaultPath(null)//设置默认打开照片的路径,null表示展示全部的照片
                         .forResult(REQUEST_CODE_CHOOSE);
                 break;
             case R.id.dracula:
