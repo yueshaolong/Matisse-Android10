@@ -39,4 +39,10 @@
     <string name="button_original">Original</string>
     <string name="button_sure_default">Sure</string>
     <string name="button_sure">Sure(%1$d)</string>
+    <plurals name="error_over_count">
+        <item quantity="one">error_over_count</item>
+        <item quantity="few">error_over_count</item>
+        <item quantity="many">error_over_count</item>
+        <item quantity="other">error_over_count</item>
+    </plurals>
 </resources>
