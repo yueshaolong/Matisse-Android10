@@ -62,6 +62,8 @@ import com.zhihu.matisse.internal.utils.PathUtils;
 import com.zhihu.matisse.internal.utils.PhotoMetadataUtils;
 
 import com.zhihu.matisse.internal.utils.SingleMediaScanner;
+
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 /**
@@ -252,7 +254,6 @@ public class MatisseActivity extends AppCompatActivity implements
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
                     MatisseActivity.this.revokeUriPermission(contentUri,
                             Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
                 new SingleMediaScanner(this.getApplicationContext(), path, new SingleMediaScanner.ScanListener() {
                     @Override public void onScanFinish() {
                         Log.i("SingleMediaScanner", "scan finish!");

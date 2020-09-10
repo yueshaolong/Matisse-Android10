@@ -96,13 +96,13 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.take_photo://这就是直接拍照的功能
                 Matisse.from(SampleActivity.this)
                         .choose(MimeType.of(MimeType.JPEG, MimeType.PNG))
-                        .defaultPath(getPictureDirPath().getAbsolutePath())//设置拍照后照片存放的路径
+                        .defaultPath(getPictureDirPath(false).getAbsolutePath())//设置拍照后照片存放的路径
                         .takePic(true)//设置立即拍照，跳转到系统相机界面
                         .capture(true)
                         .captureStrategy(
-                                new CaptureStrategy(true, "com.zhihu.matisse.sample.fileprovider",
+                                new CaptureStrategy(false, "com.zhihu.matisse.sample.fileprovider",
                                         //TODO 拍照后照片存得地址：内部存储/Pictures/preventpro；这个名字就是图片要存的文件夹名字
-                                        "preventpro"))
+                                        ""))
                         .forResult(REQUEST_CODE_TAKE_PHOTO);
                 break;
             case R.id.zhihu:
@@ -112,7 +112,7 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
                         .capture(true)
                         .captureStrategy(
                                 //TODO 第一个参数isPublic表示可以存储到公共区域还是沙箱内，是对Android10的适配；在MediaStoreCompat中使用
-                                new CaptureStrategy(true, "com.zhihu.matisse.sample.fileprovider", "preventpro"))
+                                new CaptureStrategy(false, "com.zhihu.matisse.sample.fileprovider", ""))
                         .maxSelectable(9)
                         .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
                         .gridExpectedSize(
@@ -130,7 +130,7 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
                         .setOnCheckedListener(isChecked -> {
                             Log.e("isChecked", "onCheck: isChecked=" + isChecked);
                         })
-                        .defaultPath(getPictureDirPath().getAbsolutePath())//设置默认打开照片的路径
+                        .defaultPath(getPictureDirPath(false).getAbsolutePath())//设置默认打开照片的路径
                         .forResult(REQUEST_CODE_CHOOSE);
                 break;
             case R.id.zhihu2_all:
@@ -253,15 +253,19 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
      * 设置自己存放照片的路径
      * @return
      */
-    public static File getPictureDirPath() {
+    public File getPictureDirPath(boolean isPublic) {
         File mIVMSFolder = null;
         try {
-            //设置图片存储的位置：内部存储/Pictures/preventpro
-            String path = Environment.getExternalStoragePublicDirectory(
-                    Environment.DIRECTORY_PICTURES).getAbsolutePath() + File.separator + "preventpro";
-            mIVMSFolder = new File(path);
-            if (!mIVMSFolder.exists()) {
-                mIVMSFolder.mkdirs();
+            if (isPublic) {
+                //设置图片存储的位置：内部存储/Pictures/preventpro
+                String path = Environment.getExternalStoragePublicDirectory(
+                        Environment.DIRECTORY_PICTURES).getAbsolutePath() + File.separator + "preventpro";
+                mIVMSFolder = new File(path);
+                if (!mIVMSFolder.exists()) {
+                    mIVMSFolder.mkdirs();
+                }
+            } else {
+                mIVMSFolder = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
             }
         } catch (Exception e) {
             e.printStackTrace();

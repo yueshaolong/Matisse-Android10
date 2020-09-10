@@ -95,7 +95,7 @@ public class MediaStoreCompat {
                 }
             }
 
-            System.out.println("========"+mCurrentPhotoUri);
+            System.out.println("uri========"+mCurrentPhotoUri);
             captureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mCurrentPhotoUri);
             captureIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 
@@ -121,22 +121,31 @@ public class MediaStoreCompat {
      * @return 图片的uri
      */
     private Uri createImageUri() {
-        //设置保存参数到ContentValues中
-        ContentValues contentValues = new ContentValues();
-        //设置文件名
-        contentValues.put(MediaStore.Images.Media.DISPLAY_NAME, System.currentTimeMillis()+"");
-        //兼容Android Q和以下版本
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            //android Q中不再使用DATA字段，而用RELATIVE_PATH代替
-            //TODO RELATIVE_PATH是相对路径不是绝对路径;照片存储的地方为：内部存储/Pictures/preventpro
-            contentValues.put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/preventpro");
+        Uri uri;
+        if (mCaptureStrategy.isPublic) {
+            //设置保存参数到ContentValues中
+            ContentValues contentValues = new ContentValues();
+            //设置文件名
+            contentValues.put(MediaStore.Images.Media.DISPLAY_NAME, System.currentTimeMillis()+"");
+            //兼容Android Q和以下版本
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                //android Q中不再使用DATA字段，而用RELATIVE_PATH代替
+                //TODO RELATIVE_PATH是相对路径不是绝对路径;照片存储的地方为：内部存储/Pictures/preventpro
+                contentValues.put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/preventpro");
+            }
+            //设置文件类型
+            contentValues.put(MediaStore.Images.Media.MIME_TYPE, "image/JPEG");
+            //执行insert操作，向系统文件夹中添加文件
+            //EXTERNAL_CONTENT_URI代表外部存储器，该值不变
+            uri = mContext.get().getContentResolver()
+                    .insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+        } else {
+            String imageFileName = String.format("%s.jpg", System.currentTimeMillis());
+            File storageDir = mContext.get().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+            File tempFile = new File(storageDir, imageFileName);
+            uri = FileProvider.getUriForFile(mContext.get(),
+                    mCaptureStrategy.authority, tempFile);
         }
-        //设置文件类型
-        contentValues.put(MediaStore.Images.Media.MIME_TYPE, "image/JPEG");
-        //执行insert操作，向系统文件夹中添加文件
-        //EXTERNAL_CONTENT_URI代表外部存储器，该值不变
-        Uri uri = mContext.get().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                contentValues);
         return uri;
 
     }
@@ -151,7 +160,7 @@ public class MediaStoreCompat {
             storageDir = Environment.getExternalStoragePublicDirectory(
                     Environment.DIRECTORY_PICTURES);
             if (!storageDir.exists()) storageDir.mkdirs();
-        } else {//TODO 图片存到沙箱内
+        } else {//TODO 图片存到沙箱内 getExternalFilesDir
             storageDir = mContext.get().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         }
         if (mCaptureStrategy.directory != null) {
