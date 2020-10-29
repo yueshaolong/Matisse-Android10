@@ -131,6 +131,7 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
                             Log.e("isChecked", "onCheck: isChecked=" + isChecked);
                         })
                         .defaultPath(getPictureDirPath().getAbsolutePath())//设置默认打开照片的路径
+                        .choiceEnable(false)
                         .forResult(REQUEST_CODE_CHOOSE);
                 break;
             case R.id.zhihu2_all:

@@ -224,6 +224,16 @@ public final class SelectionCreator {
     }
 
     /**
+     * 设置是否可以选择图集
+     * @param choiceEnable 自定义图片路径
+     * @return {@link SelectionCreator} for fluent API.
+     */
+    public SelectionCreator choiceEnable(boolean choiceEnable) {
+        mSelectionSpec.choiceEnable = choiceEnable;
+        return this;
+    }
+
+    /**
      * 设置是否拍照
      * @param takePic
      * @return {@link SelectionCreator} for fluent API.

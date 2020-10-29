@@ -41,6 +41,7 @@ public class AlbumsSpinner {
     private ListPopupWindow mListPopupWindow;
     private AdapterView.OnItemSelectedListener mOnItemSelectedListener;
     private String defaultPath;
+    private boolean choiceEnable;
 
     public AlbumsSpinner(@NonNull Context context) {
         mListPopupWindow = new ListPopupWindow(context, null, R.attr.listPopupWindowStyle);
@@ -110,22 +111,26 @@ public class AlbumsSpinner {
         // tint dropdown arrow icon
         Drawable[] drawables = mSelected.getCompoundDrawables();
         Drawable right = drawables[2];
-        TypedArray ta = mSelected.getContext().getTheme().obtainStyledAttributes(
-                new int[]{R.attr.album_element_color});
-        int color = ta.getColor(0, 0);
-        ta.recycle();
-        right.setColorFilter(color, PorterDuff.Mode.SRC_IN);
+        if (right != null) {
+            TypedArray ta = mSelected.getContext().getTheme().obtainStyledAttributes(
+                    new int[]{R.attr.album_element_color});
+            int color = ta.getColor(0, 0);
+            ta.recycle();
+            right.setColorFilter(color, PorterDuff.Mode.SRC_IN);
+        }
 
         mSelected.setVisibility(View.GONE);
         mSelected.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                int itemHeight = v.getResources().getDimensionPixelSize(R.dimen.album_item_height);
-                mListPopupWindow.setHeight(
-                        mAdapter.getCount() > MAX_SHOWN_COUNT ? itemHeight * MAX_SHOWN_COUNT
-                                : itemHeight * mAdapter.getCount());
-                mListPopupWindow.show();
+                if (choiceEnable) {
+                    int itemHeight = v.getResources().getDimensionPixelSize(R.dimen.album_item_height);
+                    mListPopupWindow.setHeight(
+                            mAdapter.getCount() > MAX_SHOWN_COUNT ? itemHeight * MAX_SHOWN_COUNT
+                                    : itemHeight * mAdapter.getCount());
+                    mListPopupWindow.show();
+                }
             }
         });
         mSelected.setOnTouchListener(mListPopupWindow.createDragToOpenListener(mSelected));
@@ -136,5 +141,8 @@ public class AlbumsSpinner {
     }
     public void setDefaultPath(String defaultPath) {
         this.defaultPath = defaultPath;
+    }
+    public void setChoiceEnable(boolean choiceEnable) {
+        this.choiceEnable = choiceEnable;
     }
 }

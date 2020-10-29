@@ -59,6 +59,7 @@ public final class SelectionSpec {
     public boolean showPreview;
     public String defaultPath;
     public boolean takePic;
+    public boolean choiceEnable;
 
     private SelectionSpec() {
     }
@@ -97,6 +98,7 @@ public final class SelectionSpec {
         showPreview = true;
         defaultPath = null;
         takePic = false;
+        choiceEnable = true;
     }
 
     public boolean singleSelectionModeEnabled() {

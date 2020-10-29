@@ -27,6 +27,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -97,6 +98,7 @@ public class MatisseActivity extends AppCompatActivity implements
     private boolean mOriginalEnable;
     private String defaultPath;
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         // programmatically set theme before super.onCreate()
@@ -156,6 +158,12 @@ public class MatisseActivity extends AppCompatActivity implements
         mAlbumsAdapter.setDefaultPath(defaultPath);
         mAlbumsSpinner = new AlbumsSpinner(this);
         mAlbumsSpinner.setOnItemSelectedListener(this);
+        TextView selectAlbum = (TextView) findViewById(R.id.selected_album);
+        if (!mSpec.choiceEnable) {//如果不能选择图集
+            selectAlbum.setForeground(null);
+            selectAlbum.setCompoundDrawables(null,null,null,null);
+        }
+        mAlbumsSpinner.setChoiceEnable(mSpec.choiceEnable);
         mAlbumsSpinner.setSelectedTextView((TextView) findViewById(R.id.selected_album));
         mAlbumsSpinner.setPopupAnchorView(findViewById(R.id.toolbar));
         mAlbumsSpinner.setAdapter(mAlbumsAdapter);
