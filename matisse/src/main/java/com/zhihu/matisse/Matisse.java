@@ -21,9 +21,11 @@ import android.net.Uri;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.zhihu.matisse.internal.entity.Item;
 import com.zhihu.matisse.ui.MatisseActivity;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -83,6 +85,15 @@ public final class Matisse {
      */
     public static List<Uri> obtainResult(Intent data) {
         return data.getParcelableArrayListExtra(MatisseActivity.EXTRA_RESULT_SELECTION);
+    }
+
+    /**
+     * 获取到已选图片的列表，用于再次进入回显
+     * @param data
+     * @return
+     */
+    public static ArrayList<Item> obtainSelected(Intent data) {
+        return data.getParcelableArrayListExtra(MatisseActivity.EXTRA_RESULT_SELECTION_ITEM);
     }
 
     /**

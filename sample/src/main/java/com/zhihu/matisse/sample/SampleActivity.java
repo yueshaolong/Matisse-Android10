@@ -17,8 +17,10 @@ package com.zhihu.matisse.sample;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -40,9 +42,15 @@ import com.zhihu.matisse.engine.impl.GlideEngine;
 import com.zhihu.matisse.engine.impl.PicassoEngine;
 import com.zhihu.matisse.filter.Filter;
 import com.zhihu.matisse.internal.entity.CaptureStrategy;
+import com.zhihu.matisse.internal.entity.IncapableCause;
+import com.zhihu.matisse.internal.entity.Item;
+import com.zhihu.matisse.internal.utils.PhotoMetadataUtils;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import io.reactivex.disposables.Disposable;
 
@@ -52,6 +60,8 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
     private static final int REQUEST_CODE_TAKE_PHOTO = 44;
 
     private UriAdapter mAdapter;
+    private List<Uri> uris;
+    private ArrayList<Item> selectItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,6 +125,23 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
                                 new CaptureStrategy(true, "com.zhihu.matisse.sample.fileprovider", "preventpro"))
                         .maxSelectable(9)
                         .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
+                        .addFilter(new Filter() {
+                            @Override
+                            protected Set<MimeType> constraintTypes() {
+                                return new HashSet<>();
+                            }
+
+                            @Override
+                            public IncapableCause filter(Context context, Item item) {
+                                if (!needFiltering(context, item))
+                                    return null;
+                                Uri uri = item.uri;
+                                if(uris != null && uris.size() > 0 && uris.contains(uri)){
+                                    return new IncapableCause(IncapableCause.TOAST, "图片已被选择");
+                                }
+                                return null;
+                            }
+                        })
                         .gridExpectedSize(
                                 getResources().getDimensionPixelSize(R.dimen.grid_expected_size))
                         .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
@@ -122,6 +149,7 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
                         .imageEngine(new GlideEngine())
                         .setOnSelectedListener((uriList, pathList) -> {
                             Log.e("onSelected", "onSelected: pathList=" + pathList);
+
                         })
                         .showSingleMediaType(true)
                         .originalEnable(true)
@@ -132,6 +160,7 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
                         })
                         .defaultPath(getPictureDirPath().getAbsolutePath())//设置默认打开照片的路径
                         .choiceEnable(false)
+                        .selectItems(selectItems)
                         .forResult(REQUEST_CODE_CHOOSE);
                 break;
             case R.id.zhihu2_all:
@@ -202,6 +231,9 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
         super.onActivityResult(requestCode, resultCode, data);
         System.out.println("-------->"+requestCode+"===="+resultCode+"-----"+data);
         if (/*requestCode == REQUEST_CODE_CHOOSE &&*/ resultCode == RESULT_OK) {
+            uris = Matisse.obtainResult(data);
+            selectItems = Matisse.obtainSelected(data);
+            Log.d("items----->", "onActivityResult: "+selectItems);
             mAdapter.setData(Matisse.obtainResult(data), Matisse.obtainPathResult(data));
             Log.e("OnActivityResult ", String.valueOf(Matisse.obtainOriginalState(data)));
         }

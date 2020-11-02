@@ -65,6 +65,8 @@ import com.zhihu.matisse.internal.utils.PhotoMetadataUtils;
 import com.zhihu.matisse.internal.utils.SingleMediaScanner;
 import java.util.ArrayList;
 
+import static com.zhihu.matisse.internal.model.SelectedItemCollection.STATE_SELECTION;
+
 /**
  * Main Activity to display albums and media content (images/videos) in each album
  * and also support media selecting operations.
@@ -75,6 +77,7 @@ public class MatisseActivity extends AppCompatActivity implements
         AlbumMediaAdapter.CheckStateListener, AlbumMediaAdapter.OnMediaClickListener,
         AlbumMediaAdapter.OnPhotoCapture {
 
+    public static final String EXTRA_RESULT_SELECTION_ITEM = "extra_result_selection_item";
     public static final String EXTRA_RESULT_SELECTION = "extra_result_selection";
     public static final String EXTRA_RESULT_SELECTION_PATH = "extra_result_selection_path";
     public static final String EXTRA_RESULT_ORIGINAL_ENABLE = "extra_result_original_enable";
@@ -148,6 +151,12 @@ public class MatisseActivity extends AppCompatActivity implements
         mOriginal = findViewById(R.id.original);
         mOriginalLayout.setOnClickListener(this);
 
+        if (mSpec.selectItems != null){
+            if(savedInstanceState == null){
+                savedInstanceState = new Bundle();
+            }
+            savedInstanceState.putParcelableArrayList(STATE_SELECTION, mSpec.selectItems);
+        }
         mSelectedCollection.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             mOriginalEnable = savedInstanceState.getBoolean(CHECK_STATE);
@@ -216,10 +225,10 @@ public class MatisseActivity extends AppCompatActivity implements
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_PREVIEW && resultCode == RESULT_OK) {
             Bundle resultBundle = data.getBundleExtra(BasePreviewActivity.EXTRA_RESULT_BUNDLE);
-            ArrayList<Item> selected = resultBundle.getParcelableArrayList(SelectedItemCollection.STATE_SELECTION);
-            mOriginalEnable = data.getBooleanExtra(BasePreviewActivity.EXTRA_RESULT_ORIGINAL_ENABLE, false);
+            ArrayList<Item> selected = resultBundle.getParcelableArrayList(STATE_SELECTION);
             int collectionType = resultBundle.getInt(SelectedItemCollection.STATE_COLLECTION_TYPE,
                     SelectedItemCollection.COLLECTION_UNDEFINED);
+            mOriginalEnable = data.getBooleanExtra(BasePreviewActivity.EXTRA_RESULT_ORIGINAL_ENABLE, false);
             if (data.getBooleanExtra(BasePreviewActivity.EXTRA_RESULT_APPLY, false)) {
                 Intent result = new Intent();
                 ArrayList<Uri> selectedUris = new ArrayList<>();
@@ -230,6 +239,7 @@ public class MatisseActivity extends AppCompatActivity implements
                         selectedPaths.add(PathUtils.getPath(this, item.getContentUri()));
                     }
                 }
+                result.putParcelableArrayListExtra(EXTRA_RESULT_SELECTION_ITEM, selected);
                 result.putParcelableArrayListExtra(EXTRA_RESULT_SELECTION, selectedUris);
                 result.putStringArrayListExtra(EXTRA_RESULT_SELECTION_PATH, selectedPaths);
                 result.putExtra(EXTRA_RESULT_ORIGINAL_ENABLE, mOriginalEnable);
@@ -344,6 +354,8 @@ public class MatisseActivity extends AppCompatActivity implements
             Intent result = new Intent();
             ArrayList<Uri> selectedUris = (ArrayList<Uri>) mSelectedCollection.asListOfUri();
             result.putParcelableArrayListExtra(EXTRA_RESULT_SELECTION, selectedUris);
+            ArrayList<Item> selectedItems = (ArrayList<Item>) mSelectedCollection.asList();
+            result.putParcelableArrayListExtra(EXTRA_RESULT_SELECTION_ITEM, selectedItems);
             ArrayList<String> selectedPaths = (ArrayList<String>) mSelectedCollection.asListOfString();
             result.putStringArrayListExtra(EXTRA_RESULT_SELECTION_PATH, selectedPaths);
             result.putExtra(EXTRA_RESULT_ORIGINAL_ENABLE, mOriginalEnable);

@@ -28,6 +28,7 @@ import com.zhihu.matisse.filter.Filter;
 import com.zhihu.matisse.listener.OnCheckedListener;
 import com.zhihu.matisse.listener.OnSelectedListener;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -60,6 +61,7 @@ public final class SelectionSpec {
     public String defaultPath;
     public boolean takePic;
     public boolean choiceEnable;
+    public ArrayList<Item> selectItems;
 
     private SelectionSpec() {
     }
@@ -99,6 +101,7 @@ public final class SelectionSpec {
         defaultPath = null;
         takePic = false;
         choiceEnable = true;
+        selectItems = null;
     }
 
     public boolean singleSelectionModeEnabled() {

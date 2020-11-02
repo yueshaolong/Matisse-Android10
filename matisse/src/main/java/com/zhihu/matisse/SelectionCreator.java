@@ -29,6 +29,7 @@ import androidx.fragment.app.Fragment;
 import com.zhihu.matisse.engine.ImageEngine;
 import com.zhihu.matisse.filter.Filter;
 import com.zhihu.matisse.internal.entity.CaptureStrategy;
+import com.zhihu.matisse.internal.entity.Item;
 import com.zhihu.matisse.internal.entity.SelectionSpec;
 import com.zhihu.matisse.listener.OnCheckedListener;
 import com.zhihu.matisse.listener.OnSelectedListener;
@@ -37,6 +38,7 @@ import com.zhihu.matisse.ui.MatisseActivity;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_BEHIND;
@@ -220,6 +222,16 @@ public final class SelectionCreator {
      */
     public SelectionCreator defaultPath(String defaultPath) {
         mSelectionSpec.defaultPath = defaultPath;
+        return this;
+    }
+
+    /**
+     * 已选图片的列表，用于回显已经选择的图片
+     * @param selectItems 已选择的图片列表
+     * @return {@link SelectionCreator} for fluent API.
+     */
+    public SelectionCreator selectItems(ArrayList<Item> selectItems) {
+        mSelectionSpec.selectItems = selectItems;
         return this;
     }
 
