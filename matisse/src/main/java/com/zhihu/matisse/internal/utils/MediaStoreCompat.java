@@ -25,6 +25,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.TextUtils;
+
 import androidx.fragment.app.Fragment;
 import androidx.core.content.FileProvider;
 import androidx.core.os.EnvironmentCompat;
@@ -128,8 +130,11 @@ public class MediaStoreCompat {
         //兼容Android Q和以下版本
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             //android Q中不再使用DATA字段，而用RELATIVE_PATH代替
-            //TODO RELATIVE_PATH是相对路径不是绝对路径;照片存储的地方为：内部存储/Pictures/preventpro
-            contentValues.put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/preventpro");
+            //TODO RELATIVE_PATH是相对路径不是绝对路径;照片存储的地方为：内部存储/Pictures/...
+            contentValues.put(MediaStore.Images.Media.RELATIVE_PATH,
+                    Environment.DIRECTORY_PICTURES+"/"
+                            + (TextUtils.isEmpty(defaultPath)
+                            ?"":defaultPath.substring(defaultPath.lastIndexOf("/")+1)));
         }
         //设置文件类型
         contentValues.put(MediaStore.Images.Media.MIME_TYPE, "image/JPEG");
